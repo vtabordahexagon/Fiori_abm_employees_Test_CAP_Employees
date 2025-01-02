@@ -1,0 +1,166 @@
+{
+  "_version": "1.65.0",
+  "sap.app": {
+    "id": "fioriabmempleados",
+    "type": "application",
+    "i18n": "i18n/i18n.properties",
+    "applicationVersion": {
+      "version": "0.0.1"
+    },
+    "title": "{{appTitle}}",
+    "description": "{{appDescription}}",
+    "resources": "resources.json",
+    "sourceTemplate": {
+      "id": "@sap/generator-fiori:basic",
+      "version": "1.15.7",
+      "toolsId": "d7707b27-5d50-4480-8451-f50041c51eae"
+    },
+    "dataSources": {
+      "mainService": {
+        "uri": "/odata/v4/servicedb/EmployeesData/",
+        "type": "OData",
+        "settings": {
+          "annotations": [],
+          "localUri": "localService/metadata.xml",
+          "odataVersion": "4.0"
+        }
+      }
+    },
+    "crossNavigation": {
+      "inbounds": {
+        "none-none": {
+          "semanticObject": "none",
+          "action": "none",
+          "title": "{{flpTitle}}",
+          "signature": {
+            "parameters": {},
+            "additionalParameters": "allowed"
+          }
+        }
+      }
+    }
+  },
+  "sap.ui": {
+    "technology": "UI5",
+    "icons": {
+      "icon": "",
+      "favIcon": "",
+      "phone": "",
+      "phone@2": "",
+      "tablet": "",
+      "tablet@2": ""
+    },
+    "deviceTypes": {
+      "desktop": true,
+      "tablet": true,
+      "phone": true
+    }
+  },
+  "sap.ui5": {
+    "flexEnabled": false,
+    "dependencies": {
+      "minUI5Version": "1.131.1",
+      "libs": {
+        "sap.m": {},
+        "sap.ui.core": {}
+      }
+    },
+    "contentDensities": {
+      "compact": true,
+      "cozy": true
+    },
+    "models": {
+      "i18n": {
+        "type": "sap.ui.model.resource.ResourceModel",
+        "settings": {
+          "bundleName": "fioriabmempleados.i18n.i18n"
+        }
+      },
+      "oEmployeesData": {
+        "dataSource": "mainService",
+        "preload": true,
+        "settings": {
+          "operationMode": "Server",
+          "autoExpandSelect": true,
+          "earlyRequests": true
+        }
+      }
+    },
+    "resources": {
+      "css": [
+        {
+          "uri": "css/style.css"
+        }
+      ]
+    },
+    "routing": {
+      "config": {
+        "routerClass": "sap.m.routing.Router",
+        "controlAggregation": "pages",
+        "controlId": "app",
+        "type": "View",
+        "viewType": "XML",
+        "path": "fioriabmempleados.view",
+        "async": true,
+        "viewPath": "fioriabmempleados.view",
+        "transition":"slide"
+      },
+      "routes": [
+        {
+          "name": "master",
+          "pattern": "",
+          "target": [
+            "master"
+          ]
+        },
+        {
+            "name": "createEmployee",
+            "pattern": "createEmployee",
+            "target":[
+                "createEmployee"
+            ]
+        },
+        {
+            "name": "detail",
+            "pattern": "Detail/{employeeID}",
+            "target":[
+                "detail"
+            ]
+        }
+      ],
+      "targets": {
+        "master": {
+          "viewType": "XML",
+          "transition": "slide",
+          "clearControlAggregation": false,
+          "viewId": "master",
+          "viewName": "Master"
+        },
+        "creteEmployee":{
+            "viewType": "XML",
+            "transition":"slide",
+            "clearControlAggregation": true,
+            "viewId": "createEmployee",
+            "viewName": "CreateEmployee"
+        },
+        "detail":{
+            "viewType": "XML",
+            "transition":"slide",
+            "clearControlAggregation": true,
+            "viewId": "detail",
+            "viewName": "Detail"
+        }
+      }
+    },
+    "rootView": {
+      "viewName": "fioriabmempleados.view.App",
+      "type": "XML",
+      "async": true,
+      "id": "App"
+    }
+  },
+  "sap.cloud": {
+    "public": true,
+    "service": "fioriabmempleados"
+  }
+}

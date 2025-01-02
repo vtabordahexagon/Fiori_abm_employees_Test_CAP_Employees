@@ -1,0 +1,18 @@
+<core:FragmentDefinition xmlns="sap.m" xmlns:core="sap.ui.core">
+    <Dialog title="Add Phone">
+        <content>
+            <VBox>
+                <Label text="Phone Number"/>
+                <Input id="phoneNumberInput"/>
+                <Label text="Type"/>
+                <Input id="phoneTypeInput"/>
+            </VBox>
+        </content>
+        <beginButton>
+            <Button text="Post" press="onPostPhone"/>
+        </beginButton>
+        <endButton>
+            <Button text="Cancel" press="onCancelPhone"/>
+        </endButton>
+    </Dialog>
+</core:FragmentDefinition>

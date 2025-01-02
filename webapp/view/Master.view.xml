@@ -1,0 +1,94 @@
+<mvc:View
+    controllerName="fioriabmempleados.controller.Master"
+    xmlns:table="sap.ui.table"
+    xmlns="sap.m"
+    xmlns:f="sap.f"
+    xmlns:fb="sap.ui.comp.filterbar"
+    xmlns:uxap="sap.uxap"
+    xmlns:layout="sap.ui.layout"
+    xmlns:microchart="sap.suite.ui.microchart"
+    xmlns:mvc="sap.ui.core.mvc"
+    displayBlock="true"
+    xmlns:core="sap.ui.core">
+
+    <f:DynamicPage showFooter="true">
+        <f:title>
+            <f:DynamicPageTitle>
+                <f:heading>
+                    <Title text="Employees"/>
+                </f:heading>
+            </f:DynamicPageTitle>
+        </f:title>
+
+        <f:header>
+            <f:DynamicPageHeader>
+                <f:content>
+                    <fb:FilterBar id="filterbar" useToolbar="false" search="onSearch">
+                        <fb:filterGroupItems>
+                            <fb:FilterGroupItem name="FirstName" label="First Name" groupName="Group1" visibleInFilterBar="true">
+                                <fb:control>
+                                    <Input id="FirstNameInput"></Input>
+                                </fb:control>
+                            </fb:FilterGroupItem>
+                            <fb:FilterGroupItem name="LastName" label="Last Name" groupName="Group2" visibleInFilterBar="true">
+                                <fb:control>
+                                    <Input id="LastNameInput"></Input>
+                                </fb:control>
+                            </fb:FilterGroupItem>
+                            <fb:FilterGroupItem name="Position" label="Position" groupName="Group3" visibleInFilterBar="true">
+                                <fb:control>
+                                    <Input id="PositionInput"></Input>
+                                </fb:control>
+                            </fb:FilterGroupItem>
+                        </fb:filterGroupItems>
+                    </fb:FilterBar>
+                </f:content>
+            </f:DynamicPageHeader>
+        </f:header>
+
+        <f:content>
+            <Table id="EmployeesTable">
+                <columns>
+                    <Column width="12em">
+                        <Text text="ID" />
+                    </Column>
+                    <Column width="10em" minScreenWidth="Tablet" demandPopin="true">
+                        <Text text="Nombre" />
+                    </Column>
+                    <Column width="10em" minScreenWidth="Tablet" demandPopin="true">
+                        <Text text="Apellido" />
+                    </Column>
+                    <Column width="6em" minScreenWidth="Tablet" demandPopin="true">
+                        <Text text="Posicion" />
+                    </Column>
+                    <Column width="6em">
+                        <Text text="Acciones" />
+                    </Column>
+                </columns>
+                <dependents>
+                    <ColumnListItem id="tableTemplate" vAlign="Middle" type="Navigation" press="onPressItem">
+                        <cells>
+                            <Text text="{oEmployeesData>employeeID}"/>
+                            <Text text="{oEmployeesData>firstName}"/>
+                            <Text text="{oEmployeesData>lastName}"/>
+                            <Text text="{oEmployeesData>position}"/>
+                            <HBox>
+                                <Button class="sapUiTinyMarginEnd" icon="sap-icon://delete" press="onDeletePress"/>
+                                <Button class="sapUiTinyMarginEnd" icon="sap-icon://edit" press="onEditPress"/>
+                            </HBox>
+                        </cells>
+                    </ColumnListItem>
+                </dependents>
+            </Table>
+        </f:content>
+
+        <f:footer>
+            <OverflowToolbar id="ovfToolbar">
+                <ToolbarSpacer />
+                <Button type="Accept" text="Nuevo Empleado" icon="sap-icon://add" press="onCreatePress"/>
+                <Button type="Accept" text="Guardar" icon="sap-icon://save" press="onSaveChangesPress" visible="{appView>/showFooter}"/>
+                <Button type="Reject" text="Descartar" icon="sap-icon://cancel" press="onCancelChangesPress" visible="{appView>/showFooter}"/>
+            </OverflowToolbar>
+        </f:footer>
+    </f:DynamicPage>
+</mvc:View>

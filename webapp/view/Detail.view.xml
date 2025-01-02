@@ -1,0 +1,293 @@
+<mvc:View xmlns:table="sap.ui.table" 
+controllerName="fioriabmempleados.controller.Detail"
+xmlns="sap.uxap"
+xmlns:m="sap.m"
+xmlns:f="sap.f"
+xmlns:form="sap.ui.layout.form"
+xmlns:mvc="sap.ui.core.mvc"
+xmlns:core="sap.ui.core">
+
+    <!-- Para llamar un atributo del modelo, primero hay que llamar al modelo (oEmployeesData) que declaramos antes -->
+    <ObjectPageLayout
+    id="ObjectPageLayout"
+    showTitleInHeaderContent="true"
+    alwaysShowContentHeader="false"
+    preserveHeaderStateOnScroll="false"
+    headerContentPinnable="true"
+    isChildPage="true"
+    upperCaseAnchorBar="false"
+    busyIndicatorDelay="0"
+    showFooter="{appView>/showFooter}">
+        <headerTitle>
+            <ObjectPageDynamicHeaderTitle>
+                <expandedHeading>
+                    <m:Title text="{oEmployeedData>firstName} {oEmployeedData>lastName}" wrapping="true" class="sapUiSmallMarginEnd"/>
+                </expandedHeading>
+
+                <snappedHeading>
+                    <m:FlexBox wrap="Wrap" fitContainer="true" alignItems="Center">
+                        <m:FlexBox wrap="NoWrap" fitContainer="true" alignItems="Center" class="sapUiTinyMarginEnd">
+                            <m:Title text="{oEmployeesData>firstName} {oEmployeesData>lastName}" wrapping="true"/>
+                        </m:FlexBox>
+                    </m:FlexBox>
+                </snappedHeading>
+
+                <actions>
+                    <m:HBox>
+                        <m:OverflowToolbarButton 
+                            icon="sap-icon://edit" 
+                            type="Default"
+                            tooltip="{i18n>onEditButton}"
+                            press="onEditButton"
+                            class="sapUiSmallMarginEnd"/>
+                        <m:OverflowToolbarButton 
+                            icon="sap-icon://decline" 
+                            type="Emphasized"
+                            tooltip="{i18n>onBackButton}"
+                            press="onBackButton"/>
+                    </m:HBox>
+                    
+                </actions>
+            </ObjectPageDynamicHeaderTitle>
+        </headerTitle>
+
+        <headerContent>
+            <m:FlexBox wrap="Wrap" fitContainer="true" alignItems="Stretch">
+                <m:VBox justifyContent="Center" class="sapUiSmallMarginEnd">
+                    <m:Title text="{oEmployeesData>firstName} {oEmployeesData>lastName}"/>
+                </m:VBox>
+            </m:FlexBox>
+        </headerContent>
+
+        <sections>
+            <ObjectPageSection title="{i18n>detailEmployeeTitleSection}">
+                <subSections>
+                    <ObjectPageSubSection>
+                        <blocks>
+                            <form:SimpleForm
+                                maxContainerCols="1"
+                                editable="false"
+                                layout="ResponsiveGridLayout"
+                                labelSpanL="12"
+                                labelSpanM="12"
+                                emptySpanL="0"
+                                emptySpanM="0"
+                                columnsL="1"
+                                columnsM="1">
+                                <form:content>
+                                    <m:Label text="{i18n>employeeID}"/>
+                                    <m:Text text="{oEmployeesData>employeeID}"/>
+
+                                    <m:Label text="{i18n>employeeFirstName}"/>
+                                    <m:Input value="{oEmployeesData>firstName}" editable="{appView>/editableEmployee}" width="25%"/>
+
+                                    <m:Label text="{i18n>employeeLastName}"/>
+                                    <m:Input value="{oEmployeesData>lastName}" editable="{appView>/editableEmployee}" width="25%"/>
+
+                                    <m:Label text="{i18n>employeePosition}"/>
+                                    <m:Input value="{oEmployeesData>position}" editable="{appView>/editableEmployee}" width="25%"/>
+
+                                    <m:Label text="{i18n>employeeDateOfBirth}"/>
+                                    <m:Text text="{oEmployeesData>dateOfBirth}"/>
+
+                                    <m:Label text="{i18n>employeeHireDate}"/>
+                                    <m:Text text="{oEmployeesData>hireDate}"/>
+                                </form:content>
+                            </form:SimpleForm>
+                        </blocks>
+                    </ObjectPageSubSection>
+                </subSections>
+            </ObjectPageSection>
+
+<!-- ahora armamos la seccion de la tabla de Emails del Empleado -->
+            <ObjectPageSection title="Employee Emails">
+                <ObjectPageSubSection>
+                    
+                    <m:VBox>
+                        <!-- creamos el panel de busqueda de la tabla -->
+                        <m:Panel id="EmployeesEmailsHeaderPanel">
+                            <m:headerToolbar>
+                                <m:Toolbar >
+                                    <m:Title text="{i18n>EmailsList}"/>
+                                    <m:ToolbarSpacer />
+                                    <m:SearchField
+                                        width="50%"
+                                        search="onFilterEmployeeEmails"/>
+                                    <m:Button
+                                        class="sapUiTinyMarginEnd"
+                                        icon="sap-icon://add"
+                                        press="onAddEmailPress"
+                                    /> 
+                                    <m:Button
+                                        class="sapUiTinyMarginEnd"
+                                        icon="sap-icon://synchronize"
+                                        press="refreshModel"
+                                    /> 
+                                    <m:Button
+                                        visible="{appView>/visibleSaveEmailsEdit}"
+                                        class="sapUiTinyMarginEnd"
+                                        icon="sap-icon://save"
+                                        press="onSaveEmailChangesPress"
+                                    /> 
+                                    <m:Button
+                                        visible="{appView>/visibleSaveEmailsEdit}"
+                                        class="sapUiTinyMarginEnd"
+                                        icon="sap-icon://reset"
+                                        press="onCancelEmailChangesPress"
+                                    /> 
+                                    <m:Button
+                                        visible="{!appView>/visibleSaveEmailsEdit}"
+                                        class="sapUiTinyMarginEnd"
+                                        icon="sap-icon://edit"
+                                        press="onEditEmailsPress"
+                                    /> 
+                                </m:Toolbar>
+                            </m:headerToolbar>
+                        </m:Panel>
+
+                        <!-- creamos la tabla con los datos -->
+                        <m:Table id="EmployeeEmailsTable" inset="false" growing="true" growingThreshold="10" 
+                            items="{
+                                path:'oEmployeesData>emails',
+                                parameters: {
+                                    $$updateGroupId: 'emailsEmployeeTableBatchId'
+                                }
+                            }">
+                            <m:columns>
+                                <m:Column width="12em">
+                                    <m:Text text="{i18n>EmailAddress}" />
+                                </m:Column>
+                                <m:Column width="12em">
+                                    <m:Text text="{i18n>EmailType}" />
+                                </m:Column>
+                                <m:Column width="12em">
+                                    <m:Text text="{i18n>EmailCreateAt}" />
+                                </m:Column>
+                                <m:Column width="12em">
+                                    <m:Text text="{i18n>EmailCreatedBy}" />
+                                </m:Column>
+                                <m:Column width="12em">
+                                    <m:Text text="{i18n>Actions}" />
+                                </m:Column>
+                            </m:columns>
+
+                            <m:items>
+                                <m:ColumnListItem id="EmployeeEmailsTableTemplate" vAlign="Middle" type="Inactive">
+                                    <m:cells>
+                                        <m:Input editable="{appView>/editableEmailsTable}" value="{oEmployeesData>emailAddress}" />
+                                        <m:Input editable="{appView>/editableEmailsTable}" value="{oEmployeesData>type}" />
+                                        <m:Text text="{oEmployeesData>createdAt}" />
+                                        <m:Text text="{oEmployeesData>createdBy}" />
+                                        <m:HBox >
+                                            <m:Button
+                                                class="sapUiTinyMarginEnd"
+                                                icon="sap-icon://delete"
+                                                press="onDeleteEmailPress"
+                                            /> 
+                                        </m:HBox>
+                                    </m:cells>
+                                </m:ColumnListItem>
+                            </m:items>
+                        </m:Table>
+                    </m:VBox>
+                     
+                </ObjectPageSubSection>
+            </ObjectPageSection>
+
+<!-- Seccion y tabla de telefonos del empleado -->
+            <ObjectPageSection title="Employee Phones">
+                <ObjectPageSubSection>
+                    
+                    <m:VBox>
+                        <!-- creamos el panel de busqueda de la tabla -->
+                        <m:Panel id="EmployeesPhonesHeaderPanel">
+                            <m:headerToolbar>
+                                <m:Toolbar >
+                                    <m:Title text="{i18n>PhonesList}"/>
+                                    <m:ToolbarSpacer />
+                                    <m:SearchField
+                                        width="50%"
+                                        search="onFilterEmployeePhones"/>
+                                    <m:Button
+                                        class="sapUiTinyMarginEnd"
+                                        icon="sap-icon://add"
+                                        press="onAddPhonePress"
+                                    /> 
+                                    <m:Button
+                                        class="sapUiTinyMarginEnd"
+                                        icon="sap-icon://synchronize"
+                                        press="refreshModel"
+                                    /> 
+                                    <m:Button
+                                        visible="{appView>/visibleSavePhonesEdit}"
+                                        class="sapUiTinyMarginEnd"
+                                        icon="sap-icon://save"
+                                        press="onSavePhoneChangesPress"
+                                    /> 
+                                    <m:Button
+                                        visible="{appView>/visibleSavePhonesEdit}"
+                                        class="sapUiTinyMarginEnd"
+                                        icon="sap-icon://reset"
+                                        press="onCancelPhonesChangesPress"
+                                    /> 
+                                    <m:Button
+                                        visible="{!appView>/visibleSavePhonesEdit}"
+                                        class="sapUiTinyMarginEnd"
+                                        icon="sap-icon://edit"
+                                        press="onEditPhonesPress"
+                                    /> 
+                                </m:Toolbar>
+                            </m:headerToolbar>
+                        </m:Panel>
+
+                        <!-- creamos la tabla con los datos -->
+                        <m:Table id="EmployeePhonesTable" inset="false" growing="true" growingThreshold="10"
+                        items="{
+                                path:'oEmployeesData>phones',
+                                parameters: {
+                                    $$updateGroupId: 'phonesEmployeeTableBatchId'
+                                }
+                            }">
+                            <m:columns>
+                                <m:Column width="12em">
+                                    <m:Text text="{i18n>phoneNumber}" />
+                                </m:Column>
+                                <m:Column width="12em">
+                                    <m:Text text="{i18n>type}" />
+                                </m:Column>
+                                <m:Column width="12em">
+                                    <m:Text text="{i18n>Actions}" />
+                                </m:Column>
+                            </m:columns>
+
+                            <m:items>
+                                <m:ColumnListItem id="EmployeePhonesTableTemplate" vAlign="Middle" type="Inactive">
+                                    <m:cells>
+                                        <m:Input editable="{appView>/editablePhonesTable}" value="{oEmployeesData>phoneNumber}" />
+                                        <m:Input editable="{appView>/editablePhonesTable}" value="{oEmployeesData>type}" />
+                                        <m:HBox >
+                                            <m:Button
+                                                class="sapUiTinyMarginEnd"
+                                                icon="sap-icon://delete"
+                                                press="onDeletePhonePress"
+                                            />
+                                        </m:HBox>
+                                    </m:cells>
+                                </m:ColumnListItem>
+                            </m:items>
+                        </m:Table>
+                    </m:VBox>
+                     
+                </ObjectPageSubSection>
+            </ObjectPageSection> 
+        </sections>
+
+        <footer>
+            <m:OverflowToolbar>
+                <m:ToolbarSpacer/>
+                <m:Button type="Accept" text="Save" press="guardarCambiosEmpleado"/>
+                <m:Button type="Reject" text="Cancel" press="cancelarCambiosEmpleado"/>
+            </m:OverflowToolbar>
+        </footer>
+    </ObjectPageLayout>
+</mvc:View>

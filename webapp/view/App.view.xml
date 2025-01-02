@@ -1,0 +1,9 @@
+<mvc:View controllerName="fioriabmempleados.controller.App"
+    xmlns:mvc="sap.ui.core.mvc" displayBlock="true"
+    xmlns="sap.m"
+    xmlns:f="sap.f">
+
+   <Shell >
+        <App id="app"/>
+    </Shell>
+</mvc:View>
