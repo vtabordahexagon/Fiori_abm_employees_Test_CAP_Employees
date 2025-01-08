@@ -103,27 +103,26 @@ sap.ui.define(
                     this.getView().addDependent(this._oNewEmployeeDialog);
                 }
                 var oModel = this.getView().getModel("oEmployeesData");
-                var oContext = oModel.createEntry("/Employees", {
-                    properties: {
-                        firstName: "",
-                        lastName: "",
-                        dateOfBirth: null,
-                        hireDate: null,
-                        position: ""
-                    }
+                var oListBinding = oModel.bindList("/Employees");
+                var oContext = oListBinding.create({
+                    firstName: "",
+                    lastName: "",
+                    dateOfBirth: null,
+                    hireDate: null,
+                    position: ""
                 });
                 this._oNewEmployeeDialog.setBindingContext(oContext, "oEmployeesData");
                 this._oNewEmployeeDialog.open();
             },
             onPostNewEmployee: async function () {
                 var oModel = this.getView().getModel("oEmployeesData");
-                await oModel.submitChanges();
+                await oModel.submitBatch("myGroupId");
                 this._oNewEmployeeDialog.close();
                 this.refreshModel();
             },
             onCancelNewEmployee: function () {
                 var oModel = this.getView().getModel("oEmployeesData");
-                oModel.resetChanges();
+                oModel.resetChanges("myGroupId");
                 this._oNewEmployeeDialog.close();
             },
 
