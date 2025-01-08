@@ -1,4 +1,4 @@
-<core:FragmentDefinition xmlns="sap.m" xmlns:core="sap.ui.core">
+<!-- <core:FragmentDefinition xmlns="sap.m" xmlns:core="sap.ui.core">
     <Dialog title="Nuevo Empleado">
         <content>
             <VBox>
@@ -12,6 +12,30 @@
                 <DatePicker id="newHireDate"/>
                 <Label text="Position"/>
                 <Input id="newPosition"/>
+            </VBox>
+        </content>
+        <beginButton>
+            <Button text="Post" press="onPostNewEmployee"/>
+        </beginButton>
+        <endButton>
+            <Button text="Cancel" press="onCancelNewEmployee"/>
+        </endButton>
+    </Dialog>
+</core:FragmentDefinition> -->
+<core:FragmentDefinition xmlns="sap.m" xmlns:core="sap.ui.core">
+    <Dialog title="Nuevo Empleado">
+        <content>
+            <VBox>
+                <Label text="First Name"/>
+                <Input value="{oEmployeesData>firstName}"/>
+                <Label text="Last Name"/>
+                <Input value="{oEmployeesData>lastName}"/>
+                <Label text="Birth Date"/>
+                <DatePicker value="{oEmployeesData>dateOfBirth}"/>
+                <Label text="Hire Date"/>
+                <DatePicker value="{oEmployeesData>hireDate}"/>
+                <Label text="Position"/>
+                <Input value="{oEmployeesData>position}"/>
             </VBox>
         </content>
         <beginButton>

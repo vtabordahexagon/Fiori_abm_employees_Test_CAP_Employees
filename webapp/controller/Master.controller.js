@@ -60,41 +60,70 @@ sap.ui.define(
             },
 
             //ABM
+            // onCreatePress: function () {
+            //     if (!this._oNewEmployeeDialog) {
+            //         this._oNewEmployeeDialog = sap.ui.xmlfragment("fioriabmempleados.view.fragments.NewEmployee", this);
+            //         this.getView().addDependent(this._oNewEmployeeDialog);
+            //         //aqui le seteamos el modelo, pero no funciona del todo (INVESTIGAR)
+            //         //   this._oNewEmployeeDialog.setModel(this.oModel, "oEmployeesData");
+            //     }
+            //     this._oNewEmployeeDialog.open();
+            // },
+            // onPostNewEmployee: async function () {
+            //     //Le colocamos el modelo a utilizar (ya que el seteo no funcionó, lo hacemos desde aquí)
+            //     var oModel = this.getView().getModel("oEmployeesData");
+            //     var sFirstName = sap.ui.getCore().byId("newFirstName").getValue();
+            //     var sLastName = sap.ui.getCore().byId("newLastName").getValue();
+            //     var sBirthDate = sap.ui.getCore().byId("newBirthDate").getDateValue();
+            //     var sHireDate = sap.ui.getCore().byId("newHireDate").getDateValue();
+            //     var sPosition = sap.ui.getCore().byId("newPosition").getValue();
+
+            //     // Formatear las fechas correctamente
+            //     var sFormattedHireDate = sHireDate.toISOString().split('T')[0];
+            //     var sFormattedBirthDate = sHireDate.toISOString().split('T')[0];
+
+            //     let oEmployeeBindList = oModel.bindList("/Employees");
+            //     await oEmployeeBindList.create({
+            //         firstName: sFirstName,
+            //         lastName: sLastName,
+            //         dateOfBirth: sFormattedBirthDate,
+            //         hireDate: sFormattedHireDate,
+            //         position: sPosition
+            //     });
+
+            //     this._oNewEmployeeDialog.close();
+            //     this.refreshModel();
+            // },
+            // onCancelNewEmployee: function () {
+            //     this._oNewEmployeeDialog.close();
+            // },
             onCreatePress: function () {
                 if (!this._oNewEmployeeDialog) {
                     this._oNewEmployeeDialog = sap.ui.xmlfragment("fioriabmempleados.view.fragments.NewEmployee", this);
                     this.getView().addDependent(this._oNewEmployeeDialog);
-                    //aqui le seteamos el modelo, pero no funciona del todo (INVESTIGAR)
-                    //   this._oNewEmployeeDialog.setModel(this.oModel, "oEmployeesData");
                 }
+                var oModel = this.getView().getModel("oEmployeesData");
+                var oContext = oModel.createEntry("/Employees", {
+                    properties: {
+                        firstName: "",
+                        lastName: "",
+                        dateOfBirth: null,
+                        hireDate: null,
+                        position: ""
+                    }
+                });
+                this._oNewEmployeeDialog.setBindingContext(oContext, "oEmployeesData");
                 this._oNewEmployeeDialog.open();
             },
             onPostNewEmployee: async function () {
-                //Le colocamos el modelo a utilizar (ya que el seteo no funcionó, lo hacemos desde aquí)
                 var oModel = this.getView().getModel("oEmployeesData");
-                var sFirstName = sap.ui.getCore().byId("newFirstName").getValue();
-                var sLastName = sap.ui.getCore().byId("newLastName").getValue();
-                var sBirthDate = sap.ui.getCore().byId("newBirthDate").getDateValue();
-                var sHireDate = sap.ui.getCore().byId("newHireDate").getDateValue();
-                var sPosition = sap.ui.getCore().byId("newPosition").getValue();
-
-                // Formatear las fechas correctamente
-                var sFormattedHireDate = sHireDate.toISOString().split('T')[0];
-                var sFormattedBirthDate = sHireDate.toISOString().split('T')[0];
-
-                let oEmployeeBindList = oModel.bindList("/Employees");
-                await oEmployeeBindList.create({
-                    firstName: sFirstName,
-                    lastName: sLastName,
-                    dateOfBirth: sFormattedBirthDate,
-                    hireDate: sFormattedHireDate,
-                    position: sPosition
-                });
-
+                await oModel.submitChanges();
                 this._oNewEmployeeDialog.close();
                 this.refreshModel();
             },
             onCancelNewEmployee: function () {
+                var oModel = this.getView().getModel("oEmployeesData");
+                oModel.resetChanges();
                 this._oNewEmployeeDialog.close();
             },
 
