@@ -134,49 +134,37 @@ sap.ui.define([
       },
 
       //ABM Emails (bindeado en la vista con su batch)
-      onAddEmailPress: function (oEvent) {
+      onAddEmailPress: function () {
         if (!this._oAddEmailDialog) {
-          this._oAddEmailDialog = sap.ui.xmlfragment("fioriabmempleados.view.fragments.AddEmail", this);
-          this.getView().addDependent(this._oAddEmailDialog);
+            this._oAddEmailDialog = sap.ui.xmlfragment("fioriabmempleados.view.fragments.AddEmail", this);
+            this.getView().addDependent(this._oAddEmailDialog);
         }
-        this._oAddEmailDialog.open();
-      },
-      onCancelEmail: function () {
-        this._oAddEmailDialog.close();
-      },
-      onPostEmail: async function (oEvent) {
-        var sEmailAddress = sap.ui.getCore().byId("emailAddressInput").getValue();
-        var sEmailType = sap.ui.getCore().byId("emailTypeInput").getValue();
-        var sEmployeeID = this.sEmployeeID;
-
-        // Verificar que el email no exista
-        this.oModel.bindList("/Emails").requestContexts().then(async function (aContexts) {
-          var bExists = aContexts.some(function (oContext) {
-            return oContext.getProperty("emailAddress") === sEmailAddress;
-          });
-
-          if (bExists) {
-            sap.m.MessageToast.show("Email already exists.");
-            return;
-          }
-
-          // Crear el nuevo email usando el modelo OData
-          let oEmailBindList = this.oModel.bindList("/Emails");
-          await oEmailBindList.create({
-            emailAddress: sEmailAddress,
-            type: sEmailType,
-            employeeID_employeeID: sEmployeeID
-          });
-
-          // Actualizar la vista
-          await this.updateView();
-          this._oAddEmailDialog.close();
-
-        }.bind(this)).catch(function (error) {
-          console.error("Error verifying emails:", error);
+        var oModel = this.getView().getModel("oEmployeesData");
+        var oListBinding = oModel.bindList("/Emails", undefined, undefined, undefined, { $$updateGroupId: "newEmailGroupId", $$groupId: "auto" });
+        var oContext = oListBinding.create({
+            emailAddress: "",
+            type: "",
+            employeeID_employeeID: this.sEmployeeID
         });
-      },
-      onDeleteEmailPress: function (oEvent) {
+        this._oAddEmailDialog.setBindingContext(oContext, "oEmployeesData");
+        this._oAddEmailDialog.open();
+    },
+    
+    onPostEmail: async function () {
+        var oModel = this.getView().getModel("oEmployeesData");
+        await oModel.submitBatch("newEmailGroupId");
+        this._oAddEmailDialog.close();
+        this.updateView();
+    },
+    
+    onCancelEmail: async function () {
+        var oModel = this.getView().getModel("oEmployeesData");
+        await oModel.resetChanges("newEmailGroupId");
+        this._oAddEmailDialog.close();
+    },
+
+
+      onDeleteEmailPress: async function (oEvent) {
         //hacer DELETE del mail seleccionado (obtenido por oEvent) y refrescar la tabla
         var oItemContext = oEvent.getSource().getParent().getBindingContext("oEmployeesData");
         var sEmailID = oItemContext.getPath().match(/emails\(([^)]+)\)/)[1]; //para extrar el id del Email
@@ -184,7 +172,7 @@ sap.ui.define([
         let oBindList = this.oModel.bindList("/Emails");
         let aFilter = new Filter("emailID", FilterOperator.EQ, sEmailID);
 
-        oBindList.filter(aFilter).requestContexts().then(function (aContexts) {
+        await oBindList.filter(aFilter).requestContexts().then(function (aContexts) {
           if (aContexts.length > 0) {
             aContexts[0].delete().then(function () {
               sap.m.MessageToast.show("Email eliminado con éxito");
@@ -216,42 +204,37 @@ sap.ui.define([
       },
 
       //ABM Phones (bindeado en la vista con su batch)
-      onAddPhonePress: function (oEvent) {
+      onAddPhonePress: function () {
         if (!this._oAddPhoneDialog) {
-          this._oAddPhoneDialog = sap.ui.xmlfragment("fioriabmempleados.view.fragments.AddPhone", this);
-          this.getView().addDependent(this._oAddPhoneDialog);
+            this._oAddPhoneDialog = sap.ui.xmlfragment("fioriabmempleados.view.fragments.AddPhone", this);
+            this.getView().addDependent(this._oAddPhoneDialog);
         }
-        this._oAddPhoneDialog.open();
-      },
-      onCancelPhone: function () {
-        this._oAddPhoneDialog.close();
-      },
-      onPostPhone: async function () {
-        // Obtengo los valores
-        var sPhoneNumber = sap.ui.getCore().byId("phoneNumberInput").getValue();
-        var sPhoneType = sap.ui.getCore().byId("phoneTypeInput").getValue();
-        var sEmployeeID = this.sEmployeeID;
-
-        let oPhoneBindList = this.oModel.bindList("/Phones");
-        var aContexts = await this.oModel.bindList("/Phones").requestContexts();
-        let bExists = aContexts.some(function (oContext) { return oContext.getProperty("phoneNumber") === sPhoneNumber; });
-
-        if (bExists) {
-          sap.m.MessageToast.show("Phone already exists.");
-          return;
-        }
-
-        await oPhoneBindList.create({
-          phoneNumber: sPhoneNumber,
-          type: sPhoneType,
-          employeeID_employeeID: sEmployeeID
+        var oModel = this.getView().getModel("oEmployeesData");
+        var oListBinding = oModel.bindList("/Phones", undefined, undefined, undefined, { $$updateGroupId: "newPhoneGroupId", $$groupId: "auto" });
+        var oContext = oListBinding.create({
+            phoneNumber: "",
+            type: "",
+            employeeID_employeeID: this.sEmployeeID
         });
-
-        // Actualizar la vista
-        await this.updateView();
+        this._oAddPhoneDialog.setBindingContext(oContext, "oEmployeesData");
+        this._oAddPhoneDialog.open();
+    },
+    
+    onPostPhone: async function () {
+        var oModel = this.getView().getModel("oEmployeesData");
+        await oModel.submitBatch("newPhoneGroupId");
         this._oAddPhoneDialog.close();
-      },
-      onDeletePhonePress: function (oEvent) {
+        this.updateView();
+    },
+    
+    onCancelPhone: async function () {
+        var oModel = this.getView().getModel("oEmployeesData");
+        await oModel.resetChanges("newPhoneGroupId");
+        this._oAddPhoneDialog.close();
+    },
+    
+
+      onDeletePhonePress: async function (oEvent) {
         //hacer DELETE del telefono seleccionado (obtenido por oEvent) y refrescar la tabla
         var oItemContext = oEvent.getSource().getParent().getBindingContext("oEmployeesData");
         var sPhoneID = oItemContext.getPath().match(/phones\(([^)]+)\)/)[1]; //para extrar el id del telefono
@@ -259,7 +242,7 @@ sap.ui.define([
         let oBindList = this.oModel.bindList("/Phones");
         let aFilter = new Filter("phoneID", FilterOperator.EQ, sPhoneID);
 
-        oBindList.filter(aFilter).requestContexts().then(function (aContexts) {
+        await oBindList.filter(aFilter).requestContexts().then(function (aContexts) {
           if (aContexts.length > 0) {
             aContexts[0].delete().then(function () {
               sap.m.MessageToast.show("Telefono eliminado con éxito");
