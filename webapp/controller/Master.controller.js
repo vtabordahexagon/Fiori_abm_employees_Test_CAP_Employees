@@ -103,7 +103,8 @@ sap.ui.define(
                     this.getView().addDependent(this._oNewEmployeeDialog);
                 }
                 var oModel = this.getView().getModel("oEmployeesData");
-                var oListBinding = oModel.bindList("/Employees");
+                //el bindList debe ir con paramentros del grupo para los cambios, caso contrario, se envía automaticamente
+                var oListBinding = oModel.bindList("/Employees",undefined,undefined,undefined,{$$updateGroupId:"newEmployeeGroupId",$$groupId:"auto"});
                 var oContext = oListBinding.create({
                     firstName: "",
                     lastName: "",
@@ -116,13 +117,13 @@ sap.ui.define(
             },
             onPostNewEmployee: async function () {
                 var oModel = this.getView().getModel("oEmployeesData");
-                await oModel.submitBatch("myGroupId");
+                await oModel.submitBatch("newEmployeeGroupId");
                 this._oNewEmployeeDialog.close();
                 this.refreshModel();
             },
-            onCancelNewEmployee: function () {
+            onCancelNewEmployee: async function () {
                 var oModel = this.getView().getModel("oEmployeesData");
-                oModel.resetChanges("myGroupId");
+                await oModel.resetChanges("newEmployeeGroupId");
                 this._oNewEmployeeDialog.close();
             },
 
